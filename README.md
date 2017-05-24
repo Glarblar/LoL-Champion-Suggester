@@ -1,7 +1,12 @@
 # LoL-Champion-Suggester
 
-Inputs: Prefered playable champions
-Output: a champion suggestion to pickup
+Inputs:
+  Prefered playable champions
+  Role
+  
+Output:
+  a champion suggestion to pickup
+
 
 Constraints:
 Current champion WR (Based on your elo? Based on Diamond+?)
