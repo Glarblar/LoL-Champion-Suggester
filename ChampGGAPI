@@ -1,0 +1,52 @@
+import requests
+import champkeys as keys
+import RiotConsts as Consts
+
+#class ChampAPI(object):
+#
+#    def __init__(self, Number, Position, Rank):
+#        self.ID = Number
+#        self.Role = Position
+#        self.Elo = Rank
+#
+#    def _request(self):
+#        response = requests.get(
+#            Consts.URL['OPGG'].format(
+#                ID=self.ID,
+#                Role=self.Role,
+#                elo=self.Elo
+#              )
+#        )
+#        print response.url
+#        return response.json()
+
+token = ''
+R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?elo={elo}&api_key=APIKEY'.format(
+    ID='420',
+    Role='TOP',
+    elo='SILVER',
+    APIKEY=token
+    )
+)
+
+print (R.url)
+print R.json()
+#print R.json()[0]['champ1_id']
+#print R.json()[0]['champ2_id']
+#print R.json()[0]['champ1']['winrate']
+#print R.json()[0]['champ2']['winrate']
+#print R.json()[0]['champ1']['wins']
+
+#print R.json()[1]['champ1_id']
+#print R.json()[1]['champ2_id']
+#print R.json()[1]['champ1']['winrate']
+#print R.json()[1]['champ2']['winrate']
+
+for x in range(0,100):
+    print "Champion" and R.json()[x]['champ2_id']
+    print "Winrate" and R.json()[x]['champ2']['winrate']
+    print "Wins" and R.json()[x]['champ2']['wins']
+    print "Champion" and R.json()[x]['champ1_id']
+    print "Winrate" and R.json()[x]['champ1']['winrate']
+    print "Wins" and R.json()[x]['champ1']['wins']
+    print "Time for the next one!"
