@@ -7,7 +7,7 @@ URL = {
 }
 
 playerELO = {
-    'noplayerELO': ''
+    'noplayerELO': '',
     'yesplayerELO': '?elo={ELO}'
 }
 
