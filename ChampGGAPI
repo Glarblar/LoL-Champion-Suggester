@@ -20,12 +20,17 @@ import RiotConsts as Consts
 #        print response.url
 #        return response.json()
 
-token = ''
-R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?elo={elo}&api_key=APIKEY'.format(
+GGtoken = input('Enter Your Champion.GG API Key: ')
+GGChamp1 = input('What Champion do you play?')
+GGRole = input('Which Role do you play this champion in?')
+
+GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
+
+R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?elo={elo}&api_key={APIKEY}'.format(
     ID='420',
     Role='TOP',
     elo='SILVER',
-    APIKEY=token
+    APIKEY=GGtoken
     )
 )
 
@@ -42,7 +47,7 @@ print R.json()
 #print R.json()[1]['champ1']['winrate']
 #print R.json()[1]['champ2']['winrate']
 
-for x in range(0,100):
+for x in range(0,10):
     print "Champion" and R.json()[x]['champ2_id']
     print "Winrate" and R.json()[x]['champ2']['winrate']
     print "Wins" and R.json()[x]['champ2']['wins']
@@ -50,3 +55,5 @@ for x in range(0,100):
     print "Winrate" and R.json()[x]['champ1']['winrate']
     print "Wins" and R.json()[x]['champ1']['wins']
     print "Time for the next one!"
+
+
