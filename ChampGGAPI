@@ -20,17 +20,24 @@ import RiotConsts as Consts
 #        print response.url
 #        return response.json()
 
-GGtoken = input('Enter Your Champion.GG API Key: ')
-GGChamp1 = input('What Champion do you play?')
-GGRole = input('Which Role do you play this champion in?')
+GGChamp1 = (input('What Champion do you play?  '))
+GGRole = (str)(input('Which Role do you play this champion in?  '))
+GGask = (str)(input('Would you like in input an Elo? (Yes or No)  '))
+
+
+if GGask == 'No':
+    Playerelo = ''
+else:
+    ELO = (str)(input('Which then? BRONZE, SILVER, GOLD, PLATINUM  '))
+    Playerelo = ELO
 
 GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
 
-R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?elo={elo}&api_key={APIKEY}'.format(
-    ID='420',
-    Role='TOP',
-    elo='SILVER',
-    APIKEY=GGtoken
+R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?elo={playerelo}&api_key={APIKEY}'.format(
+    ID=GGChamp1_ID,
+    Role=GGRole,
+    playerelo=Playerelo,
+    APIKEY=GGtoken,
     )
 )
 
