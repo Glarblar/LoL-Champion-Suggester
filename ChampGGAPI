@@ -2,6 +2,11 @@ import requests
 import champkeys as keys
 import RiotConsts as Consts
 
+import requests
+import Champkeys as keys
+import RiotConsts as Consts
+
+
 #class ChampAPI(object):
 #
 #    def __init__(self, Number, Position, Rank):
@@ -22,46 +27,54 @@ import RiotConsts as Consts
 
 GGtoken = (str)(input('What is your Champion.GG API Key? '))
 GGChamp1 = (input('What Champion do you play?  '))
-GGRole = (str)(input('Which Role do you play this champion in?  '))
+#GGRole = (str)(input('Which Role do you play this champion in?  '))
 GGask = (str)(input('Would you like in input an Elo? (Yes or No)  '))
+GGLimit = (input('How many champion matchups do you want to compare? '))
 
 
 if GGask == 'No':
     Playerelo = ''
 else:
     ELO = (str)(input('Which then? BRONZE, SILVER, GOLD, PLATINUM  '))
-    Playerelo = ELO
+    Playerelo = "&elo=%s" % (ELO)
 
 GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
 
-R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?elo={playerelo}&api_key={APIKEY}'.format(
+R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?{playerelo}&api_key={APIKEY}&limit={Limit}'.format(
     ID=GGChamp1_ID,
-    Role=GGRole,
+#    Role=GGRole,
+    Role='TOP',
     playerelo=Playerelo,
     APIKEY=GGtoken,
+    Limit=GGLimit
     )
 )
+GGList=[['Champion 1','Win Rate','Champion 2','Total Games']]
+#GGList=[]
 
 print (R.url)
 print R.json()
-#print R.json()[0]['champ1_id']
-#print R.json()[0]['champ2_id']
-#print R.json()[0]['champ1']['winrate']
-#print R.json()[0]['champ2']['winrate']
-#print R.json()[0]['champ1']['wins']
 
-#print R.json()[1]['champ1_id']
-#print R.json()[1]['champ2_id']
-#print R.json()[1]['champ1']['winrate']
-#print R.json()[1]['champ2']['winrate']
-
-for x in range(0,10):
-    print "Champion" and R.json()[x]['champ2_id']
-    print "Winrate" and R.json()[x]['champ2']['winrate']
-    print "Wins" and R.json()[x]['champ2']['wins']
-    print "Champion" and R.json()[x]['champ1_id']
-    print "Winrate" and R.json()[x]['champ1']['winrate']
-    print "Wins" and R.json()[x]['champ1']['wins']
+for x in range(0,GGLimit):
+    try:
+        t=R.json()[x]
+    except IndexError:
+        break
+    Champ1=R.json()[x]['champ1_id']
+    print "Champion" and Champ1
+    Champ1_WR=R.json()[x]['champ1']['winrate']
+    print "Winrate" and Champ1_WR
+    Champ2=R.json()[x]['champ2_id']
+    print "Against" and Champ2
+    TotalGames=(R.json()[x]['champ2']['wins']+R.json()[x]['champ1']['wins'])
+    print "Total Games" and TotalGames
+#    print "Champion" and R.json()[x]['champ2_id']
+#    print "Winrate" and R.json()[x]['champ2']['winrate']
+#    print "Wins" and R.json()[x]['champ2']['wins']
+#    print "Champion" and R.json()[x]['champ1_id']
+#    print "Winrate" and R.json()[x]['champ1']['winrate']
+#    print "Wins" and R.json()[x]['champ1']['wins']
     print "Time for the next one!"
+    GGList.append([Champ1,Champ1_WR,Champ2,TotalGames])
 
-
+print GGList
