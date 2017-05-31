@@ -20,6 +20,7 @@ import RiotConsts as Consts
 #        print response.url
 #        return response.json()
 
+GGtoken = (str)(input('What is your Champion.GG API Key? '))
 GGChamp1 = (input('What Champion do you play?  '))
 GGRole = (str)(input('Which Role do you play this champion in?  '))
 GGask = (str)(input('Would you like in input an Elo? (Yes or No)  '))
