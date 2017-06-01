@@ -104,7 +104,7 @@ def playraterequest(GGtoken, GGRole, GGElo):
             break
         if str(T.json()[y]['role']) == str(GGRole):
             PRchamp = T.json()[y]['championId']
-            PRchamp_name = keys.KEYSID[str('PRchamp')]
+            PRchamp_name = keys.KEYSID[str(PRchamp)]
             PRplayrate = T.json()[y]['playRate']
             PRroleplayed = T.json()[y]['percentRolePlayed']
             PRrolerate = PRplayrate * PRroleplayed
