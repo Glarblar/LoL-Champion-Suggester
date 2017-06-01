@@ -15,6 +15,7 @@ import RiotConsts as Consts
 GGChamp_Names = []
 GGChamp_IDS = []
 Playrate = [['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
+Playrate_Names = [['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
 GGList_1_ID = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
 GGList_1_NAME = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
 
@@ -34,7 +35,7 @@ else:
     ELO = (str)(raw_input('Which then? BRONZE, SILVER, GOLD, PLATINUM  '))
     ELO = ELO.upper()
     Playerelo = "&elo=%s" % (ELO)
-GGElo = (str)(raw_input('Which Tier do you want to compare to? Bronze, Silver, Gold, Platinum, or Diamond+ '))
+GGElo = (str)(raw_input('Which Tier do you want to compare to: Bronze, Silver, Gold, or Platinum? '))
 GGElo = GGElo.upper()
 GGLimit = (input('How many champion matchups do you want to compare? '))
 
@@ -42,6 +43,7 @@ GGLimit = (input('How many champion matchups do you want to compare? '))
 print (GGChamp_Names)
 print (GGChamp_IDS)
 print (Playrate)
+print (Playrate_Names)
 print (GGList_1_ID)
 print (GGList_1_NAME)
 
@@ -102,16 +104,18 @@ def playraterequest(GGtoken, GGRole, GGElo):
             break
         if str(T.json()[y]['role']) == str(GGRole):
             PRchamp = T.json()[y]['championId']
+            PRchamp_name = keys.KEYSID[str('PRchamp')]
             PRplayrate = T.json()[y]['playRate']
             PRroleplayed = T.json()[y]['percentRolePlayed']
             PRrolerate = PRplayrate * PRroleplayed
-            Playrate.append([PRchamp, PRplayrate, PRroleplayed, PRrolerate])
+            Playrate.append([PRchamp_name, PRplayrate, PRroleplayed, PRrolerate])
+            Playrate_Names.append([])
         else:
             continue
 
     with open("Playrates.csv", "wb") as f:
         writer = csv.writer(f)
-        writer.writerows(Playrate)
+        writer.writerows(Playrate_Names)
 
 # Our Execution of the Functions we created
 playraterequest(GGtoken, GGRole, GGElo)
@@ -122,5 +126,6 @@ for ID in range(0,Champnum):
 print (GGChamp_Names)
 print (GGChamp_IDS)
 print (Playrate)
+print (Playrate_Names)
 print (GGList_1_ID)
 print (GGList_1_NAME)
