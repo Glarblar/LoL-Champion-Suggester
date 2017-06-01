@@ -11,28 +11,22 @@ import Champkeys as keys
 import csv
 import RiotConsts as Consts
 
+# This section sets up our tables that we need
 GGChamp_Names = []
 GGChamp_IDS = []
+Playrate = [['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
 GGList_1_ID = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
 GGList_1_NAME = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
-# GGList=[]
-Playrate = [['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
 
-
+# This section takes inputs from the user
 GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
 GGRole = (str)(raw_input('Which Role do you play in?  '))
 GGRole = GGRole.upper()
-#GGChamp1 = (str)(raw_input('What Champion do you play?  '))
-#GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
-
 Champnum = (input('How many Champions do you want to compare? '))
 for z in range(0,Champnum):
     GGChamp = (str)(raw_input('What Champion do you play?  '))
     GGChamp_Names.append(GGChamp)
     GGChamp_IDS.append(keys.KEYSCHAMP[GGChamp])
-print GGChamp_Names
-print GGChamp_IDS
-
 GGask = (str)(raw_input('Would you like in input an Elo? (Yes or No)  '))
 if GGask == 'No':
     Playerelo = ''
@@ -44,8 +38,14 @@ GGElo = (str)(raw_input('Which Tier do you want to compare to? Bronze, Silver, G
 GGElo = GGElo.upper()
 GGLimit = (input('How many champion matchups do you want to compare? '))
 
+# A Double Check of all our Tables
+print (GGChamp_Names)
+print (GGChamp_IDS)
+print (Playrate)
+print (GGList_1_ID)
+print (GGList_1_NAME)
 
-
+#This section does the request calls for data from Champion.gg API and creates tables and a .csv file
 def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
     R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?{playerelo}&api_key={APIKEY}&limit={Limit}'.format(
         ID=GGChamp1_ID,
@@ -56,7 +56,7 @@ def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
         )
     )
     print (R.url)
-    print R.json()
+    print (R.json())
 
     for x in range(0,GGLimit):
         try:
@@ -70,11 +70,11 @@ def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
         Champ1_WR=R.json()[x]['champ1']['winrate']*100
         Champ2_WR=R.json()[x]['champ2']['winrate']*100
         TotalGames=(R.json()[x]['champ2']['wins']+R.json()[x]['champ1']['wins'])
-        print "Champion: " + str(Champ1)
-        print "Winrate: " + str(Champ1_WR)
-        print "Against: " + str(Champ2)
-        print "Total Games: " + str(TotalGames)
-        print "Time for the next one!"
+        #print "Champion: " + str(Champ1)
+        #print "Winrate: " + str(Champ1_WR)
+        #print "Against: " + str(Champ2)
+        #print "Total Games: " + str(TotalGames)
+        #print "Time for the next one!"
         if str(Champ1) == str(GGChamp1_ID):
             GGList_1_ID.append([Champ1,Champ1_WR,Champ2,TotalGames])
             GGList_1_NAME.append([Champ1_name,Champ1_WR,Champ2_name,TotalGames])
@@ -82,12 +82,9 @@ def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
             GGList_1_ID.append([Champ2,Champ2_WR,Champ1,TotalGames])
             GGList_1_NAME.append([Champ2_name,Champ2_WR,Champ1_name,TotalGames])
 
-    print GGList_1_NAME
-
     with open("Matchups1.csv","wb") as f:
         writer = csv.writer(f)
         writer.writerows(GGList_1_NAME)
-
 def playraterequest(GGtoken, GGRole, GGElo):
     T = requests.get('http://api.champion.gg/v2/champions?{playerelo}&champData=playrate,role&api_key={APIKEY}&limit={Limit}&sort=role-desc'.format(
         playerelo='elo=' + GGElo,
@@ -96,7 +93,7 @@ def playraterequest(GGtoken, GGRole, GGElo):
         )
     )
     print (T.url)
-    print T.json()
+    print (T.json())
 
     for y in range(0, 1000):
         try:
@@ -112,13 +109,18 @@ def playraterequest(GGtoken, GGRole, GGElo):
         else:
             continue
 
-    print Playrate
-
     with open("Playrates.csv", "wb") as f:
         writer = csv.writer(f)
         writer.writerows(Playrate)
 
-
+# Our Execution of the Functions we created
 playraterequest(GGtoken, GGRole, GGElo)
 for ID in range(0,Champnum):
     champmatchuprequest(GGChamp_IDS[ID], GGRole, Playerelo, GGtoken, GGLimit)
+
+# A Double Check of all our Tables
+print (GGChamp_Names)
+print (GGChamp_IDS)
+print (Playrate)
+print (GGList_1_ID)
+print (GGList_1_NAME)
