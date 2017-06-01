@@ -1,6 +1,6 @@
 #Process:
-#Grab winrates for currently played champions D+
-#Grab most played champs in Elo
+###Grab winrates for currently played champions D+
+###Grab most played champs in Elo
 #Order your champs by winrate to most played in Elo
 #Note any which have a negative winrate
 #Suggest Champions to pickup for bad matchups
@@ -22,8 +22,8 @@ Playrate = [['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
 GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
 GGRole = (str)(raw_input('Which Role do you play in?  '))
 GGRole = GGRole.upper()
-GGChamp1 = (str)(raw_input('What Champion do you play?  '))
-GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
+#GGChamp1 = (str)(raw_input('What Champion do you play?  '))
+#GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
 
 Champnum = (input('How many Champions do you want to compare? '))
 for z in range(0,Champnum):
