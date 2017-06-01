@@ -1,3 +1,12 @@
+#Process:
+#Grab winrates for currently played champions D+
+#Grab most played champs in Elo
+#   http://api.champion.gg/v2/champions?&elo=SILVER&api_key=GGtoken&limit=200
+#Order your champs by winrate to most played in Elo
+#Note any which have a negative winrate
+#Suggest Champions to pickup for bad matchups
+
+
 import requests
 import Champkeys as keys
 import RiotConsts as Consts
