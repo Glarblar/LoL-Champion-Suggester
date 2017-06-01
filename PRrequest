@@ -1,0 +1,40 @@
+import requests
+import csv
+
+GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
+GGRole = (str)(raw_input('Which Role do you play this champion in?  '))
+GGElo = (str)(raw_input('Which Tier do you want to compare to? Bronze, Silver, Gold, Platinum, or Diamond+ '))
+GGRole = GGRole.upper()
+GGElo = GGElo.upper()
+
+T = requests.get('http://api.champion.gg/v2/champions?{playerelo}&champData=playrate,role&api_key={APIKEY}&limit={Limit}&sort=role-desc'.format(
+    playerelo='?elo=' + GGElo,
+    APIKEY=GGtoken,
+    Limit=1000
+    )
+)
+print (T.url)
+print T.json()
+
+Playrate=[['Champion','Role','Play Rate','Role Rate','Percent played in Role']]
+
+for y in range(0,1000):
+    try:
+        t=T.json()[y]
+    except IndexError:
+        break
+    if str(T.json()[y]['role']) == str(GGRole):
+        PRchamp = T.json()[y]['championId']
+        PRrole = T.json()[y]['role']
+        PRplayrate = T.json()[y]['playRate']
+        PRroleplayed = T.json()[y]['percentRolePlayed']
+        PRrolerate = PRplayrate*PRroleplayed
+        Playrate.append([PRchamp,PRrole,PRplayrate,PRroleplayed,PRrolerate])
+    else:
+        continue
+
+print Playrate
+
+with open("Playrates.csv","wb") as f:
+    writer = csv.writer(f)
+    writer.writerows(Playrate)
