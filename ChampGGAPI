@@ -32,34 +32,37 @@ import RiotConsts as Consts
 
 GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
 GGChamp1 = (str)(raw_input('What Champion do you play?  '))
-#GGRole = (str)(input('Which Role do you play this champion in?  '))
+#Add multiple Champions
+GGRole = (str)(raw_input('Which Role do you play this champion in?  '))
+GGRole = GGRole.upper()
 GGask = (str)(raw_input('Would you like in input an Elo? (Yes or No)  '))
+GGElo = (str)(raw_input('Which Tier do you want to compare to? Bronze, Silver, Gold, Platinum, or Diamond+ '))
+GGElo = GGElo.upper()
 GGLimit = (input('How many champion matchups do you want to compare? '))
-
-
 if GGask == 'No':
     Playerelo = ''
 else:
     ELO = (str)(input('Which then? BRONZE, SILVER, GOLD, PLATINUM  '))
+    ELO = ELO.upper()
     Playerelo = "&elo=%s" % (ELO)
 
 GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
 
 R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?{playerelo}&api_key={APIKEY}&limit={Limit}'.format(
     ID=GGChamp1_ID,
-#    Role=GGRole,
-    Role='TOP',
+    Role=GGRole,
     playerelo=Playerelo,
     APIKEY=GGtoken,
     Limit=GGLimit
     )
 )
+print (R.url)
+print R.json()
+
 GGList_1_ID=[['Champion 1','Win Rate','Champion 2','Total Games']]
 GGList_1_NAME=[['Champion 1','Win Rate','Champion 2','Total Games']]
 #GGList=[]
 
-print (R.url)
-print R.json()
 
 for x in range(0,GGLimit):
     try:
@@ -77,12 +80,6 @@ for x in range(0,GGLimit):
     print "Winrate: " + str(Champ1_WR)
     print "Against: " + str(Champ2)
     print "Total Games: " + str(TotalGames)
-#    print "Champion" and R.json()[x]['champ2_id']
-#    print "Winrate" and R.json()[x]['champ2']['winrate']
-#    print "Wins" and R.json()[x]['champ2']['wins']
-#    print "Champion" and R.json()[x]['champ1_id']
-#    print "Winrate" and R.json()[x]['champ1']['winrate']
-#    print "Wins" and R.json()[x]['champ1']['wins']
     print "Time for the next one!"
     if str(Champ1) == str(GGChamp1_ID):
         GGList_1_ID.append([Champ1,Champ1_WR,Champ2,TotalGames])
@@ -96,3 +93,29 @@ import csv
 with open("output.csv","wb") as f:
     writer = csv.writer(f)
     writer.writerows(GGList_1_NAME)
+
+
+T = requests.get('http://api.champion.gg/v2/champions?{playerelo}&champData=playrate,role&api_key={APIKEY}&limit={Limit}&sort=role-desc'.format(
+    playerelo='elo=' + GGElo,
+    APIKEY=GGtoken,
+    Limit=1000
+    )
+)
+print (T.url)
+print T.json()
+
+Playrate=[['Champion','Playrate']]
+
+for y in range(0,1000):
+    try:
+        t=T.json()[y]
+    except IndexError:
+        break
+    if str(T.json()[y]['role']) == str(GGRole):
+        PRchamp = T.json()[y]['championId']
+        PRplayrate = T.json()[y]['playRate']
+        Playrate.append([PRchamp,PRplayrate])
+    else:
+        continue
+
+print Playrate
