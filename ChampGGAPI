@@ -1,7 +1,6 @@
 #Process:
 #Grab winrates for currently played champions D+
 #Grab most played champs in Elo
-#   http://api.champion.gg/v2/champions?&elo=SILVER&api_key=GGtoken&limit=200
 #Order your champs by winrate to most played in Elo
 #Note any which have a negative winrate
 #Suggest Champions to pickup for bad matchups
@@ -12,32 +11,40 @@ import Champkeys as keys
 import csv
 import RiotConsts as Consts
 
+GGChamp_Names = []
+GGChamp_IDS = []
+GGList_1_ID = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
+GGList_1_NAME = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
+# GGList=[]
+Playrate = [['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
 
 
 GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
 GGRole = (str)(raw_input('Which Role do you play in?  '))
 GGRole = GGRole.upper()
 GGChamp1 = (str)(raw_input('What Champion do you play?  '))
+GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
 
+Champnum = (input('How many Champions do you want to compare? '))
+for z in range(0,Champnum):
+    GGChamp = (str)(raw_input('What Champion do you play?  '))
+    GGChamp_Names.append(GGChamp)
+    GGChamp_IDS.append(keys.KEYSCHAMP[GGChamp])
+print GGChamp_Names
+print GGChamp_IDS
 
-
-
-
-#GGask = (str)(raw_input('Would you like in input an Elo? (Yes or No)  '))
-#if GGask == 'No':
-#    Playerelo = ''
-#else:
-#    ELO = (str)(raw_input('Which then? BRONZE, SILVER, GOLD, PLATINUM  '))
-#    ELO = ELO.upper()
-#    Playerelo = "&elo=%s" % (ELO)
+GGask = (str)(raw_input('Would you like in input an Elo? (Yes or No)  '))
+if GGask == 'No':
+    Playerelo = ''
+else:
+    ELO = (str)(raw_input('Which then? BRONZE, SILVER, GOLD, PLATINUM  '))
+    ELO = ELO.upper()
+    Playerelo = "&elo=%s" % (ELO)
 GGElo = (str)(raw_input('Which Tier do you want to compare to? Bronze, Silver, Gold, Platinum, or Diamond+ '))
 GGElo = GGElo.upper()
 GGLimit = (input('How many champion matchups do you want to compare? '))
 
 
-GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
-
-GGChamp_ID = []
 
 def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
     R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?{playerelo}&api_key={APIKEY}&limit={Limit}'.format(
@@ -50,11 +57,6 @@ def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
     )
     print (R.url)
     print R.json()
-
-    GGList_1_ID=[['Champion 1','Win Rate','Champion 2','Total Games']]
-    GGList_1_NAME=[['Champion 1','Win Rate','Champion 2','Total Games']]
-    #GGList=[]
-
 
     for x in range(0,GGLimit):
         try:
@@ -96,10 +98,6 @@ def playraterequest(GGtoken, GGRole, GGElo):
     print (T.url)
     print T.json()
 
-    Playrate=[['Champion','Playrate']]
-
-    Playrate = [['Champion', 'Role', 'Play Rate', 'Role Rate', 'Percent played in Role']]
-
     for y in range(0, 1000):
         try:
             t = T.json()[y]
@@ -120,5 +118,7 @@ def playraterequest(GGtoken, GGRole, GGElo):
         writer = csv.writer(f)
         writer.writerows(Playrate)
 
-champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit)
+
 playraterequest(GGtoken, GGRole, GGElo)
+for ID in range(0,Champnum):
+    champmatchuprequest(GGChamp_IDS[ID], GGRole, Playerelo, GGtoken, GGLimit)
