@@ -21,7 +21,7 @@ GGList_1_NAME = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
 
 # This section takes inputs from the user
 GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
-GGRole = (str)(raw_input('Which Role do you play in?  '))
+GGRole = (str)(raw_input('Which Role do you play in (Top, Jungle, Middle, Duo_carry, Duo_support)?  '))
 GGRole = GGRole.upper()
 Champnum = (input('How many Champions do you want to compare? '))
 for z in range(0,Champnum):
@@ -88,7 +88,7 @@ def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
         writer = csv.writer(f)
         writer.writerows(GGList_1_NAME)
 def playraterequest(GGtoken, GGRole, GGElo):
-    T = requests.get('http://api.champion.gg/v2/champions?{playerelo}&champData=playrate,role&api_key={APIKEY}&limit={Limit}&sort=role-desc'.format(
+    T = requests.get('http://api.champion.gg/v2/champions?{playerelo}&champData=playrate,role&api_key={APIKEY}&limit={Limit}&sort=playRate-desc'.format(
         playerelo='elo=' + GGElo,
         APIKEY=GGtoken,
         Limit=1000
@@ -108,8 +108,8 @@ def playraterequest(GGtoken, GGRole, GGElo):
             PRplayrate = T.json()[y]['playRate']
             PRroleplayed = T.json()[y]['percentRolePlayed']
             PRrolerate = PRplayrate * PRroleplayed
-            Playrate.append([PRchamp_name, PRplayrate, PRroleplayed, PRrolerate])
-            Playrate_Names.append([])
+            Playrate.append([PRchamp, PRplayrate, PRroleplayed, PRrolerate])
+            Playrate_Names.append([PRchamp_name, PRplayrate, PRroleplayed, PRrolerate])
         else:
             continue
 
