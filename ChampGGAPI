@@ -154,13 +154,5 @@ print (GGList_1_NMS)
 print (Matchups_IDS)
 print (Matchups_NMS)
 
-#def makematchups():
+
 #For i in range (1,Champnum)
-#Find the first entry from playrate_IDS (Opponent Name)
-#Find index 1 from GGList_1_IDs, where index 2 = first entry and index 0 = matchup_IDS index 1 (Champ 1 Winrate)
-#Find index 1 from GGList_1_IDs, where index 2 = first entry and index 0 = matchup_IDS index ... (Champ ... Winrate)
-#If Winrate is >48.5% append to list, otherwise write 'Countered'
-#Append numbers to list instead of Winrates, 1-4 or whatever
-#
-#Find the first entry from playrate_NMS
-#append a line to the matchup lists
