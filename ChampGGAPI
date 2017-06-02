@@ -9,15 +9,18 @@
 import requests
 import Champkeys as keys
 import csv
+import numpy as np
 import RiotConsts as Consts
 
 # This section sets up our tables that we need
-GGChamp_Names = []
+GGChamp_NMS = []
 GGChamp_IDS = []
-Playrate = [['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
-Playrate_Names = [['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
-GGList_1_ID = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
-GGList_1_NAME = [['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
+Playrate_IDS = []#[['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
+Playrate_NMS = []#[['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
+GGList_1_IDS = []#[['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
+GGList_1_NMS = []#[['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
+Matchups_IDS = ['Opponents']
+Matchups_NMS = ['Opponents']
 
 # This section takes inputs from the user
 GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
@@ -26,8 +29,10 @@ GGRole = GGRole.upper()
 Champnum = (input('How many Champions do you want to compare? '))
 for z in range(0,Champnum):
     GGChamp = (str)(raw_input('What Champion do you play?  '))
-    GGChamp_Names.append(GGChamp)
+    GGChamp_NMS.append(GGChamp)
+    Matchups_NMS.append(GGChamp)
     GGChamp_IDS.append(keys.KEYSCHAMP[GGChamp])
+    Matchups_IDS.append(keys.KEYSCHAMP[GGChamp])
 GGask = (str)(raw_input('Would you like in input an Elo? (Yes or No)  '))
 if GGask == 'No':
     Playerelo = ''
@@ -40,27 +45,27 @@ GGElo = GGElo.upper()
 GGLimit = (input('How many champion matchups do you want to compare? '))
 
 # A Double Check of all our Tables
-print (GGChamp_Names)
+print (GGChamp_NMS)
 print (GGChamp_IDS)
-print (Playrate)
-print (Playrate_Names)
-print (GGList_1_ID)
-print (GGList_1_NAME)
+print (Playrate_IDS)
+print (Playrate_NMS)
+print (GGList_1_IDS)
+print (GGList_1_NMS)
 
 #This section does the request calls for data from Champion.gg API and creates tables and a .csv file
-def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
+def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken):
     R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?{playerelo}&api_key={APIKEY}&limit={Limit}'.format(
         ID=GGChamp1_ID,
         Role=GGRole,
         playerelo=Playerelo,
         APIKEY=GGtoken,
-        Limit=GGLimit
+        Limit=500
         )
     )
     print (R.url)
     print (R.json())
 
-    for x in range(0,GGLimit):
+    for x in range(0,500):
         try:
             t=R.json()[x]
         except IndexError:
@@ -78,15 +83,15 @@ def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken, GGLimit):
         #print "Total Games: " + str(TotalGames)
         #print "Time for the next one!"
         if str(Champ1) == str(GGChamp1_ID):
-            GGList_1_ID.append([Champ1,Champ1_WR,Champ2,TotalGames])
-            GGList_1_NAME.append([Champ1_name,Champ1_WR,Champ2_name,TotalGames])
+            GGList_1_IDS.append([Champ1,Champ1_WR,Champ2,TotalGames])
+            GGList_1_NMS.append([Champ1_name,Champ1_WR,Champ2_name,TotalGames])
         else:
-            GGList_1_ID.append([Champ2,Champ2_WR,Champ1,TotalGames])
-            GGList_1_NAME.append([Champ2_name,Champ2_WR,Champ1_name,TotalGames])
+            GGList_1_IDS.append([Champ2,Champ2_WR,Champ1,TotalGames])
+            GGList_1_NMS.append([Champ2_name,Champ2_WR,Champ1_name,TotalGames])
 
     with open("Matchups1.csv","wb") as f:
         writer = csv.writer(f)
-        writer.writerows(GGList_1_NAME)
+        writer.writerows(GGList_1_NMS)
 def playraterequest(GGtoken, GGRole, GGElo):
     T = requests.get('http://api.champion.gg/v2/champions?{playerelo}&champData=playrate,role&api_key={APIKEY}&limit={Limit}&sort=playRate-desc'.format(
         playerelo='elo=' + GGElo,
@@ -108,24 +113,54 @@ def playraterequest(GGtoken, GGRole, GGElo):
             PRplayrate = T.json()[y]['playRate']
             PRroleplayed = T.json()[y]['percentRolePlayed']
             PRrolerate = PRplayrate * PRroleplayed
-            Playrate.append([PRchamp, PRplayrate, PRroleplayed, PRrolerate])
-            Playrate_Names.append([PRchamp_name, PRplayrate, PRroleplayed, PRrolerate])
+            Playrate_IDS.append([PRchamp, PRplayrate, PRroleplayed, PRrolerate])
+            Playrate_NMS.append([PRchamp_name, PRplayrate, PRroleplayed, PRrolerate])
         else:
             continue
 
     with open("Playrates.csv", "wb") as f:
         writer = csv.writer(f)
-        writer.writerows(Playrate_Names)
+        writer.writerows(Playrate_NMS)
 
 # Our Execution of the Functions we created
 playraterequest(GGtoken, GGRole, GGElo)
 for ID in range(0,Champnum):
-    champmatchuprequest(GGChamp_IDS[ID], GGRole, Playerelo, GGtoken, GGLimit)
+    champmatchuprequest(GGChamp_IDS[ID], GGRole, Playerelo, GGtoken)
 
 # A Double Check of all our Tables
-print (GGChamp_Names)
+print (GGChamp_NMS)
 print (GGChamp_IDS)
-print (Playrate)
-print (Playrate_Names)
-print (GGList_1_ID)
-print (GGList_1_NAME)
+print (Playrate_IDS)
+print (Playrate_NMS)
+print (GGList_1_IDS)
+print (GGList_1_NMS)
+
+#Sort Playrate
+Playrate_IDS.sort(key=lambda row:row[3], reverse=True)
+Playrate_NMS.sort(key=lambda row:row[3], reverse=True)
+#Sort GGLists
+GGList_1_IDS.sort(key=lambda row:row[3], reverse=True)
+GGList_1_NMS.sort(key=lambda row:row[3], reverse=True)
+
+# A Double Check of all our Tables
+print (GGChamp_NMS)
+print (GGChamp_IDS)
+print (Playrate_IDS)
+print (Playrate_NMS)
+print (GGList_1_IDS)
+print (GGList_1_NMS)
+
+#Create Matchup Table
+print (Matchups_IDS)
+print (Matchups_NMS)
+
+#def makematchups():
+#For i in range (1,Champnum)
+#Find the first entry from playrate_IDS (Opponent Name)
+#Find index 1 from GGList_1_IDs, where index 2 = first entry and index 0 = matchup_IDS index 1 (Champ 1 Winrate)
+#Find index 1 from GGList_1_IDs, where index 2 = first entry and index 0 = matchup_IDS index ... (Champ ... Winrate)
+#If Winrate is >48.5% append to list, otherwise write 'Countered'
+#Append numbers to list instead of Winrates, 1-4 or whatever
+#
+#Find the first entry from playrate_NMS
+#append a line to the matchup lists
