@@ -19,8 +19,8 @@ Playrate_IDS = []#[['Champion', 'Play Rate', 'Role Rate', 'Percent played in Rol
 Playrate_NMS = []#[['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
 GGList_1_IDS = []#[['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
 GGList_1_NMS = []#[['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
-Matchups_IDS = ['Opponents']
-Matchups_NMS = ['Opponents']
+Matchups_IDS = [['Opponents']]
+Matchups_NMS = [['Opponents']]
 Matchup_NMS_WR_Dict = {}
 
 # This section takes inputs from the user
@@ -31,9 +31,9 @@ Champnum = (input('How many Champions do you want to compare? '))
 for z in range(0,Champnum):
     GGChamp = (str)(raw_input('What Champion do you play?  '))
     GGChamp_NMS.append(GGChamp)
-    Matchups_NMS.append(GGChamp)
+    Matchups_NMS[0].append(GGChamp)
     GGChamp_IDS.append(keys.KEYSCHAMP[GGChamp])
-    Matchups_IDS.append(keys.KEYSCHAMP[GGChamp])
+    Matchups_IDS[0].append(keys.KEYSCHAMP[GGChamp])
 GGask = (str)(raw_input('Would you like in input an Elo? (Yes or No)  '))
 if GGask == 'No':
     Playerelo = ''
@@ -144,26 +144,42 @@ print (Matchup_NMS_WR_Dict)
 print (Matchups_IDS)
 print (Matchups_NMS)
 
-
-#def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,Matchups_NMS,Matchups_IDS):
-#Opp_Line_IDS = []
-#Opp_Line_NMS = []
+def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Matchups_IDS):
+    Opp_Line_IDS = []
+    Opp_Line_NMS = []
 ###Find the first entry from playrate_IDS (Opponent Name)
-#Opp_IDS = Playrate_IDS[Index][0]
-#Opp_NMS = Playrate_NMS[Index][0]
-#Opp_Line_NMS.append(Opp_NMS)
-#Opp_Line_IDS.append(Opp_IDS)
+    Opp_IDS = Playrate_IDS[Index][0]
+    Opp_NMS = Playrate_NMS[Index][0]
+    Opp_Line_NMS.append(Opp_NMS)
+    Opp_Line_IDS.append(Opp_IDS)
 ###Find index 1 from GGList_1_IDs, where index 2 = first entry and index 0 = matchup_IDS index 1 (Champ 1 Winrate)
 ###Find index 1 from GGList_1_IDs, where index 2 = first entry and index 0 = matchup_IDS index ... (Champ ... Winrate)
-#For i in range (1,Champnum)
-#   Champ_i_WR = Matchup_NMS_WR_Dict[Matchups_NMS[0][i]+Opp_NMS]
+    for i in range (0,Champnum):
+        try:
+            Matchup_NMS_WR_Dict[GGChamp_NMS[i] + Opp_NMS]
+        except KeyError:
+            Opp_Line_NMS.append('N/A')
+            Opp_Line_IDS.append('N/A')
+            break
+        Champ_i_WR = Matchup_NMS_WR_Dict[GGChamp_NMS[i]+Opp_NMS]
 ###If Winrate is >49% append to list, otherwise write 'Countered'
-#   if Champ_i_WR > 49:
-#       Opp_Line_NMS.append(Champ_i_WR)
-#       Opp_Line_IDS.append(Champ_i_WR)
-#   else:
-#       Opp_Line_NMS.append('')
-#       Opp_Line_IDS.append('')
+        if Champ_i_WR > 49:
+            Opp_Line_NMS.append(Champ_i_WR)
+            Opp_Line_IDS.append(Champ_i_WR)
+        else:
+            Opp_Line_NMS.append('')
+            Opp_Line_IDS.append('')
 ###append a line to the matchup lists
-#Matchups_NMS.append(Opp_Line_NMS)
-#Matchups_IDS.append(Opp_Line_IDS)
+    Matchups_NMS.append(Opp_Line_NMS)
+    Matchups_IDS.append(Opp_Line_IDS)
+
+for Index in range(0,GGLimit):
+    makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Matchups_IDS)
+
+# A Double Check of all our Tables
+print (Matchups_IDS)
+print (Matchups_NMS)
+
+with open("Matchups.csv", "wb") as f:
+    writer = csv.writer(f)
+    writer.writerows(Matchups_NMS)
