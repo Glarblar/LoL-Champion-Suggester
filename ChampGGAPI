@@ -10,10 +10,11 @@ import requests
 import Champkeys as keys
 import csv
 #import numpy as np
-import RiotConsts as Consts
+#import RiotConsts as Consts
 
 # This section sets up our tables that we need
 GGChamp_NMS = []
+GGChamp_NMS_Keyed = []
 GGChamp_IDS = []
 Playrate_IDS = []#[['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
 Playrate_NMS = []#[['Champion', 'Play Rate', 'Role Rate', 'Percent played in Role']]
@@ -32,8 +33,10 @@ for z in range(0,Champnum):
     GGChamp = (str)(raw_input('What Champion do you play?  '))
     GGChamp_NMS.append(GGChamp)
     Matchups_NMS[0].append(GGChamp)
+    KEYID =keys.KEYSCHAMP[GGChamp]
     GGChamp_IDS.append(keys.KEYSCHAMP[GGChamp])
     Matchups_IDS[0].append(keys.KEYSCHAMP[GGChamp])
+    GGChamp_NMS_Keyed.append(keys.KEYSID[KEYID])
 GGask = (str)(raw_input('Would you like in input an Elo? (Yes or No)  '))
 if GGask == 'No':
     Playerelo = ''
@@ -132,17 +135,18 @@ GGList_1_IDS.sort(key=lambda row:row[3], reverse=True)
 GGList_1_NMS.sort(key=lambda row:row[3], reverse=True)
 
 # A Double Check of all our Tables
-#print (GGChamp_NMS)
-#print (GGChamp_IDS)
-#print (Playrate_IDS)
-#print (Playrate_NMS)
-#print (GGList_1_IDS)
-#print (GGList_1_NMS)
-#print (Matchup_NMS_WR_Dict)
+print (GGChamp_NMS)
+print (GGChamp_NMS_Keyed)
+print (GGChamp_IDS)
+print (Playrate_IDS)
+print (Playrate_NMS)
+print (GGList_1_IDS)
+print (GGList_1_NMS)
+print (Matchup_NMS_WR_Dict)
 
 #Create Matchup Table
-#print (Matchups_IDS)
-#print (Matchups_NMS)
+print (Matchups_IDS)
+print (Matchups_NMS)
 
 def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Matchups_IDS):
     Opp_Line_IDS = []
@@ -174,7 +178,7 @@ def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Mat
     Matchups_IDS.append(Opp_Line_IDS)
 
 for Index in range(0,GGLimit):
-    makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Matchups_IDS)
+    makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS_Keyed,Matchups_NMS,Matchups_IDS)
 
 # A Double Check of all our Tables
 print (Matchups_IDS)
