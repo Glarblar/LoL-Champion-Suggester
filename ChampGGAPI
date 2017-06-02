@@ -1,15 +1,15 @@
 #Process:
 ###Grab winrates for currently played champions D+
 ###Grab most played champs in Elo
-#Order your champs by winrate to most played in Elo
-#Note any which have a negative winrate
+###Order your champs by winrate to most played in Elo
+###Note any which have a negative winrate
 #Suggest Champions to pickup for bad matchups
 
 
 import requests
 import Champkeys as keys
 import csv
-import numpy as np
+#import numpy as np
 import RiotConsts as Consts
 
 # This section sets up our tables that we need
@@ -21,6 +21,7 @@ GGList_1_IDS = []#[['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
 GGList_1_NMS = []#[['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
 Matchups_IDS = ['Opponents']
 Matchups_NMS = ['Opponents']
+Matchup_NMS_WR_Dict = {}
 
 # This section takes inputs from the user
 GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
@@ -43,14 +44,6 @@ else:
 GGElo = (str)(raw_input('Which Tier do you want to compare to: Bronze, Silver, Gold, or Platinum? '))
 GGElo = GGElo.upper()
 GGLimit = (input('How many champion matchups do you want to compare? '))
-
-# A Double Check of all our Tables
-print (GGChamp_NMS)
-print (GGChamp_IDS)
-print (Playrate_IDS)
-print (Playrate_NMS)
-print (GGList_1_IDS)
-print (GGList_1_NMS)
 
 #This section does the request calls for data from Champion.gg API and creates tables and a .csv file
 def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken):
@@ -85,9 +78,11 @@ def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken):
         if str(Champ1) == str(GGChamp1_ID):
             GGList_1_IDS.append([Champ1,Champ1_WR,Champ2,TotalGames])
             GGList_1_NMS.append([Champ1_name,Champ1_WR,Champ2_name,TotalGames])
+            Matchup_NMS_WR_Dict[Champ1_name+Champ2_name] = Champ1_WR
         else:
             GGList_1_IDS.append([Champ2,Champ2_WR,Champ1,TotalGames])
             GGList_1_NMS.append([Champ2_name,Champ2_WR,Champ1_name,TotalGames])
+            Matchup_NMS_WR_Dict[Champ2_name+Champ1_name] = Champ2_WR
 
     with open("Matchups1.csv","wb") as f:
         writer = csv.writer(f)
@@ -127,17 +122,11 @@ playraterequest(GGtoken, GGRole, GGElo)
 for ID in range(0,Champnum):
     champmatchuprequest(GGChamp_IDS[ID], GGRole, Playerelo, GGtoken)
 
-# A Double Check of all our Tables
-print (GGChamp_NMS)
-print (GGChamp_IDS)
-print (Playrate_IDS)
-print (Playrate_NMS)
-print (GGList_1_IDS)
-print (GGList_1_NMS)
-
-#Sort Playrate
+#Sort and FilterPlayrate
 Playrate_IDS.sort(key=lambda row:row[3], reverse=True)
 Playrate_NMS.sort(key=lambda row:row[3], reverse=True)
+del Playrate_IDS[(GGLimit):]
+del Playrate_NMS[(GGLimit):]
 #Sort GGLists
 GGList_1_IDS.sort(key=lambda row:row[3], reverse=True)
 GGList_1_NMS.sort(key=lambda row:row[3], reverse=True)
@@ -149,10 +138,32 @@ print (Playrate_IDS)
 print (Playrate_NMS)
 print (GGList_1_IDS)
 print (GGList_1_NMS)
+print (Matchup_NMS_WR_Dict)
 
 #Create Matchup Table
 print (Matchups_IDS)
 print (Matchups_NMS)
 
 
+#def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,Matchups_NMS,Matchups_IDS):
+#Opp_Line_IDS = []
+#Opp_Line_NMS = []
+###Find the first entry from playrate_IDS (Opponent Name)
+#Opp_IDS = Playrate_IDS[Index][0]
+#Opp_NMS = Playrate_NMS[Index][0]
+#Opp_Line_NMS.append(Opp_NMS)
+#Opp_Line_IDS.append(Opp_IDS)
+###Find index 1 from GGList_1_IDs, where index 2 = first entry and index 0 = matchup_IDS index 1 (Champ 1 Winrate)
+###Find index 1 from GGList_1_IDs, where index 2 = first entry and index 0 = matchup_IDS index ... (Champ ... Winrate)
 #For i in range (1,Champnum)
+#   Champ_i_WR = Matchup_NMS_WR_Dict[Matchups_NMS[0][i]+Opp_NMS]
+###If Winrate is >49% append to list, otherwise write 'Countered'
+#   if Champ_i_WR > 49:
+#       Opp_Line_NMS.append(Champ_i_WR)
+#       Opp_Line_IDS.append(Champ_i_WR)
+#   else:
+#       Opp_Line_NMS.append('')
+#       Opp_Line_IDS.append('')
+###append a line to the matchup lists
+#Matchups_NMS.append(Opp_Line_NMS)
+#Matchups_IDS.append(Opp_Line_IDS)
