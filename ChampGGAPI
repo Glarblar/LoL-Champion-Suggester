@@ -56,7 +56,7 @@ def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken):
         )
     )
     print (R.url)
-    print (R.json())
+    #print (R.json())
 
     for x in range(0,500):
         try:
@@ -95,7 +95,7 @@ def playraterequest(GGtoken, GGRole, GGElo):
         )
     )
     print (T.url)
-    print (T.json())
+    #print (T.json())
 
     for y in range(0, 1000):
         try:
@@ -132,17 +132,17 @@ GGList_1_IDS.sort(key=lambda row:row[3], reverse=True)
 GGList_1_NMS.sort(key=lambda row:row[3], reverse=True)
 
 # A Double Check of all our Tables
-print (GGChamp_NMS)
-print (GGChamp_IDS)
-print (Playrate_IDS)
-print (Playrate_NMS)
-print (GGList_1_IDS)
-print (GGList_1_NMS)
-print (Matchup_NMS_WR_Dict)
+#print (GGChamp_NMS)
+#print (GGChamp_IDS)
+#print (Playrate_IDS)
+#print (Playrate_NMS)
+#print (GGList_1_IDS)
+#print (GGList_1_NMS)
+#print (Matchup_NMS_WR_Dict)
 
 #Create Matchup Table
-print (Matchups_IDS)
-print (Matchups_NMS)
+#print (Matchups_IDS)
+#print (Matchups_NMS)
 
 def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Matchups_IDS):
     Opp_Line_IDS = []
