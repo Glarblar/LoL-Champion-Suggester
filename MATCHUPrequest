@@ -1,0 +1,66 @@
+import requests
+import csv
+import Champkeys as keys
+
+GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
+GGChamp1 = (str)(raw_input('What Champion do you play?  '))
+#Add multiple Champions
+GGRole = (str)(raw_input('Which Role do you play this champion in?  '))
+GGRole = GGRole.upper()
+GGask = (str)(raw_input('Would you like in input an Elo? (Yes or No)  '))
+
+GGLimit = (input('How many champion matchups do you want to compare? '))
+if GGask == 'No':
+    Playerelo = ''
+else:
+    ELO = (str)(raw_input('Which then? BRONZE, SILVER, GOLD, PLATINUM  '))
+    ELO = ELO.upper()
+    Playerelo = "&elo=%s" % (ELO)
+
+GGChamp1_ID = keys.KEYSCHAMP[GGChamp1]
+
+R = requests.get('http://api.champion.gg/v2/champions/{ID}/{Role}/matchups?{playerelo}&api_key={APIKEY}&limit={Limit}'.format(
+    ID=GGChamp1_ID,
+    Role=GGRole,
+    playerelo=Playerelo,
+    APIKEY=GGtoken,
+    Limit=GGLimit
+    )
+)
+print (R.url)
+print R.json()
+
+GGList_1_ID=[['Champion 1','Win Rate','Champion 2','Total Games']]
+GGList_1_NAME=[['Champion 1','Win Rate','Champion 2','Total Games']]
+#GGList=[]
+
+
+for x in range(0,GGLimit):
+    try:
+        t=R.json()[x]
+    except IndexError:
+        break
+    Champ1=R.json()[x]['champ1_id']
+    Champ1_name=keys.KEYSID[str(Champ1)]
+    Champ2=R.json()[x]['champ2_id']
+    Champ2_name=keys.KEYSID[str(Champ2)]
+    Champ1_WR=R.json()[x]['champ1']['winrate']*100
+    Champ2_WR=R.json()[x]['champ2']['winrate']*100
+    TotalGames=(R.json()[x]['champ2']['wins']+R.json()[x]['champ1']['wins'])
+    print "Champion: " + str(Champ1)
+    print "Winrate: " + str(Champ1_WR)
+    print "Against: " + str(Champ2)
+    print "Total Games: " + str(TotalGames)
+    print "Time for the next one!"
+    if str(Champ1) == str(GGChamp1_ID):
+        GGList_1_ID.append([Champ1,Champ1_WR,Champ2,TotalGames])
+        GGList_1_NAME.append([Champ1_name,Champ1_WR,Champ2_name,TotalGames])
+    else:
+        GGList_1_ID.append([Champ2,Champ2_WR,Champ1,TotalGames])
+        GGList_1_NAME.append([Champ2_name,Champ2_WR,Champ1_name,TotalGames])
+
+print GGList_1_NAME
+
+with open("Matchups1.csv","wb") as f:
+    writer = csv.writer(f)
+    writer.writerows(GGList_1_NAME)

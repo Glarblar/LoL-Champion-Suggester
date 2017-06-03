@@ -1,0 +1,32 @@
+def requestSummonerData(region, summonerName, APIKey):
+
+    URL = "https://" + region + ".api.net/api/lol/na/v1.4/summoner/by-name/" + summonerName + "?api_key=" + APIKey
+    response = requests.get(URL)
+    return response.json()
+
+def requestRankedData(region, ID, APIKey):
+    URL = "https://" + region + ".api.pvp.net/api/lol/na/v2.5/league/by-summoner/" + ID + "/entry?api_key=" + APIKey
+    print(URL)
+    response = requests.get(URL)
+    return response.json()
+
+def main():
+    print("\nWhat up Homie.  Enter your region to get started")
+    print("Type in one of the following regions or else the program wont work correctly:\n")
+    print("NA EUW EUNE LAN BR KR LAS OCE TR RU PBE\n")
+
+    region = (str)(input('Type in one of the regions above: '))
+    summonerName = (str)(input('Type your Summoner Name here and NO NOT INCLUDE ANY SPACES: '))
+    APIKey = (str)(input('Copy and Paste your API Key here: '))
+
+    responseJSON = requestSummonerData(region, summonerName, APIKey)
+
+    ID = responseJSON[summonerName]['id']
+    ID = str(ID)
+    responseJSON2 = requestRankedData(region, ID, APIKey)
+    print(responseJSON2[ID][0]['tier'])
+    print(responseJSON2[ID][0]['entries'][0]['division'])
+    print(responseJSON2[ID][0]['entries'][0]['LeaguePoints'])
+
+if __name__ == "__main__":
+    main()
