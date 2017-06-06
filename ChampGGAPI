@@ -226,3 +226,15 @@ for ID in range(0,len(GGCounters)):
 print (GGList_1_IDS)
 print (GGList_1_NMS)
 print (Matchup_NMS_WR_Dict)
+
+### Create variable for how much Bias you want in the system as a percentage, then replace the 49 in 'makematchups' with it
+###
+### Final Equation is sum of[(((50+Bias)-WR)*(% of Games)*(Percentage played in Role)^2*100)^(1/3)] for each champion in GGList_1_NMS
+### 50 is nominal winrate
+### Bias is user defined
+### WR is GGList_1_NMS[i][2]
+### % of games is GGList_1_NMS[i][4] / (sum GGList_1_NMS[i][4] where GGList_1_NMS[i][1] is the same champion)
+### Percentage played in Role is Playrate_NMS[i][4] where i is the champion
+###
+### Next identify the Class for each champion using Keys.keysclass or keys.keyssubclass
+### Give a list sorted by class, and maybe filter out any class which user already plays? or at least mention it.
