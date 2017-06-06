@@ -50,6 +50,7 @@ else:
 GGElo = (str)(raw_input('Which Tier do you want to compare to: Bronze, Silver, Gold, or Platinum? '))
 GGElo = GGElo.upper()
 GGLimit = (input('How many champion matchups do you want to compare? '))
+GGBias = (input('How much champion Winrate bias would you like to test with (typ. 0-1.5)? '))
 
 ### Create list with played champs and Class or Subclass
 for i in range(0,Champnum):
@@ -146,8 +147,6 @@ del Playrate_NMS[(GGLimit):]
 GGList_1_IDS.sort(key=lambda row:row[3], reverse=True)
 GGList_1_NMS.sort(key=lambda row:row[3], reverse=True)
 
-
-
 # A Double Check of all our Tables
 #print (GGChamp_NMS)
 #print (GGChamp_NMS_Keyed)
@@ -164,7 +163,7 @@ print (Matchups_IDS)
 print (Matchups_NMS)
 
 ###Create Matchup Table
-def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Matchups_IDS):
+def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Matchups_IDS, GGBias):
     Opp_Line_IDS = []
     Opp_Line_NMS = []
 ###Find the first entry from playrate_IDS (Opponent Name)
@@ -182,8 +181,8 @@ def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Mat
             Opp_Line_IDS.append('')
             continue
         Champ_i_WR = Matchup_NMS_WR_Dict[GGChamp_NMS[i]+Opp_NMS]
-###If Winrate is >49% append to list, otherwise write 'Countered'
-        if Champ_i_WR > 49:
+###If Winrate is >GGBias% append to list, otherwise write 'Countered'
+        if Champ_i_WR > (50-GGBias):
             Opp_Line_NMS.append(Champ_i_WR)
             Opp_Line_IDS.append(Champ_i_WR)
         else:
@@ -194,7 +193,7 @@ def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Mat
     Matchups_IDS.append(Opp_Line_IDS)
 
 for Index in range(0,GGLimit):
-    makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS_Keyed,Matchups_NMS,Matchups_IDS)
+    makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS_Keyed,Matchups_NMS,Matchups_IDS,GGBias)
 
 # A Double Check our Tables
 print (Matchups_IDS)
@@ -225,8 +224,7 @@ print (GGList_1_IDS)
 print (GGList_1_NMS)
 print (Matchup_NMS_WR_Dict)
 
-### Create variable for how much Bias you want in the system as a percentage, then replace the 49 in 'makematchups' with it
-###
+
 ### Final Equation is sum of[(((50+Bias)-WR)*(% of Games)*(Percentage played in Role)^2*100)^(1/3)] for each champion in GGList_1_NMS
 ### 50 is nominal winrate
 ### Bias is user defined
