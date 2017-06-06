@@ -1,3 +1,5 @@
+#ChampionGG API: f177ab0418adb477988929297f9e1d48
+
 #Process:
 ###Grab winrates for currently played champions D+
 ###Grab most played champs in Elo
@@ -24,6 +26,8 @@ GGList_1_NMS = []#[['Champion 1', 'Win Rate', 'Champion 2', 'Total Games']]
 Matchups_IDS = [['Opponents']]
 Matchups_NMS = [['Opponents']]
 Matchup_NMS_WR_Dict = {}
+GGList_1_Class = []
+GGList_1_Subclass = []
 
 # This section takes inputs from the user
 GGtoken = (str)(raw_input('What is your Champion.GG API Key? '))
@@ -48,6 +52,15 @@ else:
 GGElo = (str)(raw_input('Which Tier do you want to compare to: Bronze, Silver, Gold, or Platinum? '))
 GGElo = GGElo.upper()
 GGLimit = (input('How many champion matchups do you want to compare? '))
+
+### Create list with played champs and Class or Subclass
+for i in range(0,Champnum):
+    GGList_1_Class.append(keys.KEYSCLASS[GGChamp_NMS_Keyed[i]])
+    GGList_1_Subclass.append(keys.KEYSSUBCLASS[GGChamp_NMS_Keyed[i]])
+
+print (GGChamp_NMS_Keyed)
+print (GGList_1_Class)
+print (GGList_1_Subclass)
 
 #This section does the request calls for data from Champion.gg API and creates tables and a .csv file
 def champmatchuprequest(GGChamp1_ID, GGRole, Playerelo, GGtoken):
@@ -135,6 +148,8 @@ del Playrate_NMS[(GGLimit):]
 GGList_1_IDS.sort(key=lambda row:row[3], reverse=True)
 GGList_1_NMS.sort(key=lambda row:row[3], reverse=True)
 
+
+
 # A Double Check of all our Tables
 #print (GGChamp_NMS)
 #print (GGChamp_NMS_Keyed)
@@ -144,9 +159,11 @@ GGList_1_NMS.sort(key=lambda row:row[3], reverse=True)
 #print (GGList_1_IDS)
 #print (GGList_1_NMS)
 #print (Matchup_NMS_WR_Dict)
+#print (GGList_1_NMS)
+#print (GGList_1_Class)
+#print (GGList_1_Subclass)
 print (Matchups_IDS)
 print (Matchups_NMS)
-
 
 ###Create Matchup Table
 def makematchups(Champnum,Index,Matchup_NMS_WR_Dict,GGChamp_NMS,Matchups_NMS,Matchups_IDS):
